@@ -7,4 +7,4 @@ A best-of-breed "Swifty" networking socket layer. Built from the ground up with 
 Ease of use for developers. SoS provides a "Swifty 3" API for socket management and IP address handeling.
 
 ## Is SoS scalable?
-Implementing a high-scale, non-blocking socket layer to build robust, high-scale cloud services was the goal. Ultimately, SoS is a thin layer over native OS sockets.
+The primary goal is to provide an foundational framework to implement high-scale, non-blocking, robust cloud services. It works.
