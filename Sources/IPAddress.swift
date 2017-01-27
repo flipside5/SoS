@@ -23,7 +23,7 @@ fileprivate struct ifaddrs {
     var fa_data: UnsafePointer<UInt8>
 }
 
-public typealias Port = UInt16
+public typealias PortID = UInt16
 private let DefaultIPAddressType: IPAddressType = .version4
 
 public enum IPAddressType {
@@ -198,12 +198,12 @@ fileprivate func ==(lhs: RawIPAddress, rhs: RawIPAddress) -> Bool {
 
 public struct IPAddress: Hashable {
     let ipAddress: String
-    let port: Port
+    let port: PortID
     private let _hashValue: Int
     fileprivate let rawAddress: RawIPAddress
     fileprivate let formatted: String
 
-    static public func localhost(withPort port: Port? = nil, type: IPAddressType = DefaultIPAddressType) -> IPAddress {
+    static public func localhost(withPort port: PortID? = nil, type: IPAddressType = DefaultIPAddressType) -> IPAddress {
         switch type {
         case .version6:
             return IPAddress(ipAddress: "::1", port: port)!
@@ -223,7 +223,7 @@ public struct IPAddress: Hashable {
         }
     }
     
-    public init?(ipAddress: String, port: Port? = nil) {
+    public init?(ipAddress: String, port: PortID? = nil) {
         if let address = socketAddress6(fromIP: ipAddress, port: port) {
             self.init(.version6(address))
         } else if let address = socketAddress4(fromIP: ipAddress, port: port) {
@@ -238,7 +238,7 @@ public struct IPAddress: Hashable {
         self._hashValue = rawAddress.hashValue
         
         guard let (ipString, portString) = rawAddress.components else { return nil }
-        guard let port = Port(portString) else { return nil }
+        guard let port = PortID(portString) else { return nil }
         self.ipAddress = ipString
         self.port = port
         self.formatted = RawIPAddress.formattedString(withIPAddress: ipString, port: portString)
@@ -275,7 +275,7 @@ extension IPAddress: CustomStringConvertible, CustomDebugStringConvertible {
 
 /*--------------------------------------------------*/
 
-fileprivate func socketAddress6(fromIP ipv6: String, port: Port?) -> sockaddr_in6? {
+fileprivate func socketAddress6(fromIP ipv6: String, port: PortID?) -> sockaddr_in6? {
     let AddressPartCount = 8
     let parts = ipv6.components(separatedBy: ":")
     guard parts.count <= AddressPartCount else { return nil }
@@ -306,7 +306,7 @@ fileprivate func socketAddress6(fromIP ipv6: String, port: Port?) -> sockaddr_in
     return sin6
 }
 
-fileprivate func socketAddress4(fromIP ipv4: String, port: Port?) -> sockaddr_in? {
+fileprivate func socketAddress4(fromIP ipv4: String, port: PortID?) -> sockaddr_in? {
     #if os(Linux)
         var sin4 = sockaddr_in(sin_family:sa_family_t(PF_INET),
                                sin_port:in_port_t(0),

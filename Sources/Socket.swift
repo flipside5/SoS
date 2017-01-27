@@ -261,9 +261,9 @@ public class Socket {
 /*---------------------------------------------------------------*/
 
 public class UDPServerSocket: Socket {
-    public let port: Port
+    public let port: PortID
     
-    public required init?(port: Port, bufferSize: Int = 128, addressType: IPAddressType = .version4) {
+    public required init?(port: PortID, bufferSize: Int = 128, addressType: IPAddressType = .version4) {
         self.port = port
         super.init(addressType: addressType, connectionType: .udp)
         do {
@@ -398,14 +398,14 @@ public class TCPClientSocket: Socket {
 
 public class TCPServerSocket: Socket {
     private enum StreamMode {
-        case unbound(Port)
-        case acceptingConnections(Port)
+        case unbound(PortID)
+        case acceptingConnections(PortID)
         case closed
     }
     
     private var mode: StreamMode = .unbound(0)
     
-    public init?(port: Port, type: IPAddressType = IPAddress.localhost().type) {
+    public init?(port: PortID, type: IPAddressType = IPAddress.localhost().type) {
         self.mode = .unbound(port)
         super.init(addressType: type, connectionType: .tcp)
         
