@@ -1,8 +1,8 @@
 import PackageDescription
 
 let package = Package(
-    name: "SocketsOnSwift",
+    name: "SwiftOnSockets",
     targets:[
-        Target(name: "SocketsOnSwift", dependencies: [])
+        Target(name: "SwiftOnSockets", dependencies: [])
     ]
 )
