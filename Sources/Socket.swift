@@ -182,7 +182,7 @@ public class Socket {
     }
     
     fileprivate static func bind(_ handle: SocketRawHandle, _ ptr: UnsafePointer<sockaddr>!, _ size: socklen_t) -> Int32 {
-        return Glibc.close(handle)
+        return Glibc.bind(handle, ptr, size)
     }
     
     fileprivate static func connect(_ handle: SocketRawHandle, _ ptr: UnsafePointer<sockaddr>!, _ size: socklen_t) -> Int32 {
@@ -223,7 +223,7 @@ public class Socket {
     }
     
     fileprivate static func bind(_ handle: SocketRawHandle, _ ptr: UnsafePointer<sockaddr>!, _ size: socklen_t) -> Int32 {
-        return Darwin.close(handle)
+        return Darwin.bind(handle, ptr, size)
     }
     
     fileprivate static func connect(_ handle: SocketRawHandle, _ ptr: UnsafePointer<sockaddr>!, _ size: socklen_t) -> Int32 {

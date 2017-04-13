@@ -1,4 +1,4 @@
-# Swift on Sockets --- SoS
+# Swift on Sockets - SoS
 
 ## What is SoS?
 A best-of-breed "Swifty" networking socket layer. Built from the ground up with Swift 3 to be cross-platform and IPv4/IPv6 capable.
