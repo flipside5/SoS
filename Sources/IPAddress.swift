@@ -30,7 +30,7 @@ public enum IPAddressType {
     case version6
     case version4
     
-    var size: UInt32 {
+    public var size: UInt32 {
         switch self {
         case .version6: return UInt32(MemoryLayout<sockaddr_in6>.size)
         case .version4: return UInt32(MemoryLayout<sockaddr_in>.size)
@@ -159,51 +159,51 @@ extension RawIPAddress: CustomStringConvertible, CustomDebugStringConvertible {
 }
 
 #if os(Linux)
-fileprivate func ==(lhs: RawIPAddress, rhs: RawIPAddress) -> Bool {
-    switch (lhs, rhs) {
-    case (.version6(let l6), .version6(let r6)):
-        return l6.sin6_family == r6.sin6_family &&
-            l6.sin6_port == r6.sin6_port &&
-            l6.sin6_flowinfo == r6.sin6_flowinfo &&
-            l6.sin6_addr.__in6_u.__u6_addr32 == r6.sin6_addr.__in6_u.__u6_addr32 &&
-            l6.sin6_scope_id == r6.sin6_scope_id
-    case (.version4(let l4), .version4(let r4)):
-        return l4.sin_family == r4.sin_family &&
-            l4.sin_port == r4.sin_port &&
-            l4.sin_addr.s_addr == r4.sin_addr.s_addr
-    default: return false
+    fileprivate func ==(lhs: RawIPAddress, rhs: RawIPAddress) -> Bool {
+        switch (lhs, rhs) {
+        case (.version6(let l6), .version6(let r6)):
+            return l6.sin6_family == r6.sin6_family &&
+                l6.sin6_port == r6.sin6_port &&
+                l6.sin6_flowinfo == r6.sin6_flowinfo &&
+                l6.sin6_addr.__in6_u.__u6_addr32 == r6.sin6_addr.__in6_u.__u6_addr32 &&
+                l6.sin6_scope_id == r6.sin6_scope_id
+        case (.version4(let l4), .version4(let r4)):
+            return l4.sin_family == r4.sin_family &&
+                l4.sin_port == r4.sin_port &&
+                l4.sin_addr.s_addr == r4.sin_addr.s_addr
+        default: return false
+        }
     }
-}
 #else
-fileprivate func ==(lhs: RawIPAddress, rhs: RawIPAddress) -> Bool {
-    switch (lhs, rhs) {
-    case (.version6(let l6), .version6(let r6)):
-        return l6.sin6_len == r6.sin6_len &&
-            l6.sin6_family == r6.sin6_family &&
-            l6.sin6_port == r6.sin6_port &&
-            l6.sin6_flowinfo == r6.sin6_flowinfo &&
-            l6.sin6_addr.__u6_addr.__u6_addr32 == r6.sin6_addr.__u6_addr.__u6_addr32 &&
-            l6.sin6_scope_id == r6.sin6_scope_id
-    case (.version4(let l4), .version4(let r4)):
-        return l4.sin_len == r4.sin_len &&
-            l4.sin_family == r4.sin_family &&
-            l4.sin_port == r4.sin_port &&
-            l4.sin_addr.s_addr == r4.sin_addr.s_addr
-    default: return false
+    fileprivate func ==(lhs: RawIPAddress, rhs: RawIPAddress) -> Bool {
+        switch (lhs, rhs) {
+        case (.version6(let l6), .version6(let r6)):
+            return l6.sin6_len == r6.sin6_len &&
+                l6.sin6_family == r6.sin6_family &&
+                l6.sin6_port == r6.sin6_port &&
+                l6.sin6_flowinfo == r6.sin6_flowinfo &&
+                l6.sin6_addr.__u6_addr.__u6_addr32 == r6.sin6_addr.__u6_addr.__u6_addr32 &&
+                l6.sin6_scope_id == r6.sin6_scope_id
+        case (.version4(let l4), .version4(let r4)):
+            return l4.sin_len == r4.sin_len &&
+                l4.sin_family == r4.sin_family &&
+                l4.sin_port == r4.sin_port &&
+                l4.sin_addr.s_addr == r4.sin_addr.s_addr
+        default: return false
+        }
     }
-}
 #endif
 
 /*--------------------------------------------------*/
 
-public struct IPAddress: Hashable {
-    let ipAddress: String
-    let port: PortID
+public struct IPAddress: Hashable, CustomStringConvertible, CustomDebugStringConvertible {
+    public let ipAddress: String
+    public let port: PortID
     private let _hashValue: Int
     fileprivate let rawAddress: RawIPAddress
     fileprivate let formatted: String
-
-    static public func localhost(withPort port: PortID? = nil, type: IPAddressType = DefaultIPAddressType) -> IPAddress {
+    
+    public static func localhost(withPort port: PortID? = nil, type: IPAddressType = DefaultIPAddressType) -> IPAddress {
         switch type {
         case .version6:
             return IPAddress(ipAddress: "::1", port: port)!
@@ -257,13 +257,7 @@ public struct IPAddress: Hashable {
     public lazy private(set) var nativeData: CFData = {
         return self.rawAddress.nativeData
     }()
-}
-
-public func ==(lhs: IPAddress, rhs: IPAddress) -> Bool {
-    return lhs.rawAddress == rhs.rawAddress
-}
-
-extension IPAddress: CustomStringConvertible, CustomDebugStringConvertible {
+    
     public var description: String {
         return rawAddress.description
     }
@@ -271,6 +265,10 @@ extension IPAddress: CustomStringConvertible, CustomDebugStringConvertible {
     public var debugDescription: String {
         return rawAddress.debugDescription
     }
+}
+
+public func ==(lhs: IPAddress, rhs: IPAddress) -> Bool {
+    return lhs.rawAddress == rhs.rawAddress
 }
 
 /*--------------------------------------------------*/
@@ -284,7 +282,7 @@ fileprivate func socketAddress6(fromIP ipv6: String, port: PortID?) -> sockaddr_
         let prefix = String(repeating: ":", count: AddressPartCount - parts.count)
         addressString = "\(prefix)\(ipv6)"
     }
-
+    
     let fullIPv6 = addressString.components(separatedBy: ":")
         .map { $0.characters.count == 0 ? "0\($0)" : $0 }
         .reduce("") { (result, part) in result.characters.count == 0 ? part : "\(result):\(part)" }
