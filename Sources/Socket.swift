@@ -273,12 +273,12 @@ public class UDPServerSocket: Socket {
             return nil
         }
     }
-
+    
     public func bind() throws {
         guard let socket = socket else { throw SocketError.socketClosed }
         
-        let localAddress = IPAddress.localhost(withPort: port, type: socket.addressType)
-        let result = localAddress.withUnsafeNativePointer { (ptr, size) in Socket.bind(socket.handle, ptr, size) }
+        let listeningAddress = IPAddress.emptyhost(withPort: port, type: socket.addressType)
+        let result = listeningAddress.withUnsafeNativePointer { (ptr, size) in Socket.bind(socket.handle, ptr, size) }
         guard result >= 0 else { throw SocketError.currentFailure }
     }
     
@@ -426,9 +426,9 @@ public class TCPServerSocket: Socket {
     public func bind() throws {
         guard let socket = socket else { throw SocketError.socketClosed }
         guard case .unbound(let localPort) = mode else { throw SocketError.internalError }
-
-        let localAddress = IPAddress.localhost(withPort: localPort)
-        let result = localAddress.withUnsafeNativePointer { (ptr, size) in Socket.bind(socket.handle, ptr, size) }
+        
+        let listeningAddress = IPAddress.emptyhost(withPort: localPort, type: socket.addressType)
+        let result = listeningAddress.withUnsafeNativePointer { (ptr, size) in Socket.bind(socket.handle, ptr, size) }
         guard result >= 0 else { throw SocketError.currentFailure }
         mode = .acceptingConnections(localPort)
     }

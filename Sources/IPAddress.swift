@@ -71,9 +71,9 @@ fileprivate enum RawIPAddress: Hashable {
             #else
                 let ipComponents = address.sin6_addr.__u6_addr.__u6_addr32.2
             #endif
-            return Int(UInt32(ipComponents) + (UInt32(UInt32.max) / 2) + UInt32(address.sin6_port))
+            return Int(ipComponents) + Int(UInt16.max) + Int(address.sin6_port)
         case .version4(let address):
-            return Int(UInt32(address.sin_addr.s_addr) + (UInt32(UInt32.max) / 2) + UInt32(address.sin_port))
+            return Int(address.sin_addr.s_addr) + Int(UInt16.max) + Int(address.sin_port)
         }
     }
     
@@ -209,6 +209,15 @@ public struct IPAddress: Hashable, CustomStringConvertible, CustomDebugStringCon
             return IPAddress(ipAddress: "::1", port: port)!
         case .version4:
             return IPAddress(ipAddress: "127.0.0.1", port: port)!
+        }
+    }
+    
+    public static func emptyhost(withPort port: PortID? = nil, type: IPAddressType = DefaultIPAddressType) -> IPAddress {
+        switch type {
+        case .version6:
+            return IPAddress(ipAddress: "::0", port: port)!
+        case .version4:
+            return IPAddress(ipAddress: "0.0.0.0", port: port)!
         }
     }
     
