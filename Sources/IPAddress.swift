@@ -201,7 +201,7 @@ public struct IPAddress: Hashable, CustomStringConvertible, CustomDebugStringCon
     public let port: PortID
     private let _hashValue: Int
     fileprivate let rawAddress: RawIPAddress
-    fileprivate let formatted: String
+    public let formatted: String
     
     public static func localhost(withPort port: PortID? = nil, type: IPAddressType = DefaultIPAddressType) -> IPAddress {
         switch type {
@@ -229,6 +229,18 @@ public struct IPAddress: Hashable, CustomStringConvertible, CustomDebugStringCon
         switch rawAddress {
         case .version6: return IPAddressType.version6
         case .version4: return IPAddressType.version4
+        }
+    }
+    
+    public init?(formatted: String) {
+        let parts = formatted.components(separatedBy: ":")
+        switch parts.count {
+        case 1:
+            self.init(ipAddress: formatted, port: nil)
+        case 2:
+            self.init(ipAddress: parts[0], port: PortID(parts[1]))
+        default:
+            return nil
         }
     }
     
