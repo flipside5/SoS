@@ -24,7 +24,7 @@ fileprivate struct ifaddrs {
 }
 
 public typealias PortID = UInt16
-private let DefaultIPAddressType: IPAddressType = .version4
+let DefaultIPAddressType: IPAddressType = .version4
 
 public enum IPAddressType {
     case version6
@@ -107,7 +107,7 @@ fileprivate enum RawIPAddress: Hashable {
     }
     
     fileprivate var components: (String, String)? {
-        return withUnsafeNativePointer { RawIPAddress.components(fromSocketPointer: $0.0) }
+        return withUnsafeNativePointer { ptr, _ in RawIPAddress.components(fromSocketPointer: ptr) }
     }
     
     fileprivate static func formattedString(withIPAddress ipAddress: String, port: String) -> String {
