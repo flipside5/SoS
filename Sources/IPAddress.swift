@@ -24,7 +24,7 @@ fileprivate struct ifaddrs {
 }
 
 public typealias PortID = UInt16
-let DefaultIPAddressType: IPAddressType = .version4
+public let DefaultIPAddressType: IPAddressType = .version4
 
 public enum IPAddressType {
     case version6
