@@ -305,8 +305,8 @@ fileprivate func socketAddress6(fromIP ipv6: String, port: PortID?) -> sockaddr_
     }
     
     let fullIPv6 = addressString.components(separatedBy: ":")
-        .map { $0.characters.count == 0 ? "0\($0)" : $0 }
-        .reduce("") { (result, part) in result.characters.count == 0 ? part : "\(result):\(part)" }
+        .map { $0.count == 0 ? "0\($0)" : $0 }
+        .reduce("") { (result, part) in result.count == 0 ? part : "\(result):\(part)" }
     
     var sin6 = sockaddr_in6()
     #if !os(Linux)
