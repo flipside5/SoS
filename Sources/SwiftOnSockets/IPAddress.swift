@@ -87,7 +87,7 @@ fileprivate enum RawIPAddress: Hashable {
     fileprivate static func socketAddressSizeOf(_ socketPtr: UnsafePointer<sockaddr>) -> UInt8 {
         #if os(Linux)
             return Int32(socketPtr.pointee.sa_family) == PF_INET
-                ? UInt8(truncatingBitPattern: IPAddressType.version4.size)
+                ? UInt8(truncatingIfNeeded: IPAddressType.version4.size)
                 : UInt8(IPAddressType.version6.size)
         #else
             return socketPtr.pointee.sa_len
